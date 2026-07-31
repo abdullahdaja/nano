@@ -1,0 +1,39 @@
+name: Build Windows x64
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up MSVC env
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git vcpkg
+          .\vcpkg\bootstrap-vcpkg.bat
+
+      - name: Install dependencies with vcpkg
+        run: |
+          .\vcpkg\vcpkg.exe install glfw3:x64-windows opus:x64-windows
+
+      - name: Configure CMake
+        run: |
+          cmake -S . -B build -A x64 -DCMAKE_TOOLCHAIN_FILE=%CD%\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: |
+          cmake --build build --config Release --target NanoVoice
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NanoVoice-win-x64
+          path: build\\Release\\NanoVoice.exe
