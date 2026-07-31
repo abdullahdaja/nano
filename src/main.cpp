@@ -6,7 +6,6 @@
 #include <atomic>
 #include <random>
 #include <chrono>
-#include <netdb.h>
 #include <sstream>
 
 // 1. Single-header Audio Engine
@@ -31,6 +30,7 @@
     #include <sys/socket.h>
     #include <netinet/in.h>
     #include <arpa/inet.h>
+    #include <netdb.h>
     #include <unistd.h>
     typedef int SOCKET;
     #define INVALID_SOCKET -1
@@ -300,11 +300,14 @@ void punch_hole_to_peer(const std::string &peerIp, uint16_t peerPort, int count 
 
 
 
-int main() {
+int main(int argc, char** argv) {
     // 1. Initialize Sockets
 #ifdef _WIN32
     WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        std::cerr << "WSAStartup failed" << std::endl;
+        return -1;
+    }
 #endif
     g_Engine.udpSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
@@ -475,6 +478,10 @@ int main() {
     if (g_Engine.udpSocket != INVALID_SOCKET) {
         closesocket(g_Engine.udpSocket);
     }
+
+#ifdef _WIN32
+    WSACleanup();
+#endif
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
