@@ -8,20 +8,7 @@
 #include <chrono>
 #include <sstream>
 
-// 1. Single-header Audio Engine
-#define MINIAUDIO_IMPLEMENTATION
-#include "miniaudio.h"
-
-// 2. Opus Codec
-#include <opus/opus.h>
-
-// 3. ImGui & Windowing
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-#include <GLFW/glfw3.h>
-
-// 4. Platform Networking (UDP)
+// 4. Platform Networking (UDP) - must be included before other libs on Windows
 #ifdef _WIN32
     #include <winsock2.h>
     #include <ws2tcpip.h>
@@ -36,6 +23,20 @@
     #define INVALID_SOCKET -1
     #define closesocket close
 #endif
+
+// 1. Single-header Audio Engine
+#define MINIAUDIO_IMPLEMENTATION
+#include "miniaudio.h"
+
+// 2. Opus Codec
+#include <opus/opus.h>
+
+// 3. ImGui & Windowing
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#include <GLFW/glfw3.h>
+
 
 // Audio & Codec Parameters
 constexpr uint32_t SAMPLE_RATE = 48000;
