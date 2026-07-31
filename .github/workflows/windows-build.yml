@@ -17,7 +17,7 @@ jobs:
 
       - name: Install dependencies via vcpkg
         run: |
-          $env:VCPKG_INSTALLATION_ROOT/vcpkg.exe install glfw3:x64-windows opus:x64-windows
+          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install glfw3:x64-windows opus:x64-windows
 
       - name: Configure CMake
         run: |
